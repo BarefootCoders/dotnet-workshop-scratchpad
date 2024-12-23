@@ -13,11 +13,21 @@ using System.Data.Entity.Infrastructure;
 
 namespace ContosoUniversity.Controllers
 {
+    /// <summary>
+    /// Controller for managing student data.
+    /// </summary>
     public class StudentController : Controller
     {
         private SchoolContext db = new SchoolContext();
 
-        // GET: Student
+        /// <summary>
+        /// Displays a list of students, optionally filtered and sorted, with paging.
+        /// </summary>
+        /// <param name="sortOrder">The sort order for the student list.</param>
+        /// <param name="currentFilter">The current filter string.</param>
+        /// <param name="searchString">The search string to filter students by.</param>
+        /// <param name="page">The current page number.</param>
+        /// <returns>A view containing the paged list of students.</returns>
         public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
@@ -63,8 +73,11 @@ namespace ContosoUniversity.Controllers
             return View(students.ToPagedList(pageNumber, pageSize));
         }
 
-
-        // GET: Student/Details/5
+        /// <summary>
+        /// Displays the details of a specific student.
+        /// </summary>
+        /// <param name="id">The ID of the student.</param>
+        /// <returns>A view containing the student details, or an HTTP 400 error if the ID is null, or an HTTP 404 error if the student is not found.</returns>
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -79,15 +92,21 @@ namespace ContosoUniversity.Controllers
             return View(student);
         }
 
-        // GET: Student/Create
+
+        /// <summary>
+        /// Displays a form for creating a new student.
+        /// </summary>
+        /// <returns>A view containing the student creation form.</returns>
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Student/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Creates a new student.
+        /// </summary>
+        /// <param name="student">The student data to create.</param>
+        /// <returns>Redirects to the Index action if successful, otherwise returns the create view with error messages.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "LastName, FirstMidName, EnrollmentDate")]Student student)
@@ -109,8 +128,11 @@ namespace ContosoUniversity.Controllers
             return View(student);
         }
 
-
-        // GET: Student/Edit/5
+        /// <summary>
+        /// Displays a form for editing an existing student.
+        /// </summary>
+        /// <param name="id">The ID of the student to edit.</param>
+        /// <returns>A view containing the student edit form, or an HTTP 400 error if the ID is null, or an HTTP 404 error if the student is not found.</returns>
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -125,9 +147,11 @@ namespace ContosoUniversity.Controllers
             return View(student);
         }
 
-        // POST: Student/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Edits an existing student.
+        /// </summary>
+        /// <param name="id">The ID of the student to edit.</param>
+        /// <returns>Redirects to the Index action if successful, otherwise returns the edit view with error messages.</returns>
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public ActionResult EditPost(int? id)
@@ -155,7 +179,12 @@ namespace ContosoUniversity.Controllers
             return View(studentToUpdate);
         }
 
-        // GET: Student/Delete/5
+        /// <summary>
+        /// Displays a confirmation page for deleting a student.
+        /// </summary>
+        /// <param name="id">The ID of the student to delete.</param>
+        /// <param name="saveChangesError">Indicates whether an error occurred during a previous delete attempt.</param>
+        /// <returns>A view containing the student deletion confirmation page, or an HTTP 400 error if the ID is null, or an HTTP 404 error if the student is not found.</returns>
         public ActionResult Delete(int? id, bool? saveChangesError = false)
         {
             if (id == null)
@@ -174,7 +203,11 @@ namespace ContosoUniversity.Controllers
             return View(student);
         }
 
-        // POST: Student/Delete/5
+        /// <summary>
+        /// Deletes a student.
+        /// </summary>
+        /// <param name="id">The ID of the student to delete.</param>
+        /// <returns>Redirects to the Index action if successful, otherwise redirects to the Delete action with an error indicator.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
@@ -192,6 +225,11 @@ namespace ContosoUniversity.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        /// <summary>
+        /// Releases unmanaged resources and optionally releases managed resources.
+        /// </summary>
+        /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
