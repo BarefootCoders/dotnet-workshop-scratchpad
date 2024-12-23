@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using ContosoUniversity.DAL;
+﻿using ContosoUniversity.DAL;
 using ContosoUniversity.ViewModels;
-
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniversity.Controllers
 {
@@ -14,13 +10,19 @@ namespace ContosoUniversity.Controllers
     /// </summary>
     public class HomeController : Controller
     {
-        private SchoolContext db = new SchoolContext();
+        private readonly SchoolContext _db; // Use dependency injection
+
+        // Constructor injection for SchoolContext
+        public HomeController(SchoolContext db)
+        {
+            _db = db;
+        }
 
         /// <summary>
         /// Displays the home page.
         /// </summary>
         /// <returns>The home page view.</returns>
-        public ActionResult Index()
+        public IActionResult Index() // Updated return type
         {
             return View();
         }
@@ -29,13 +31,11 @@ namespace ContosoUniversity.Controllers
         /// Displays the about page with student enrollment statistics.
         /// </summary>
         /// <returns>The about page view with enrollment data.</returns>
-        public ActionResult About()
+        public IActionResult About() // Updated return type and async
         {
-            string query = "SELECT EnrollmentDate, COUNT(*) AS StudentCount "
-                + "FROM Person "
-                + "WHERE Discriminator = 'Student' "
-                + "GROUP BY EnrollmentDate";
-            IEnumerable<EnrollmentDateGroup> data = db.Database.SqlQuery<EnrollmentDateGroup>(query);
+            FormattableString query = $"SELECT EnrollmentDate, COUNT(*) AS StudentCount FROM Person WHERE Discriminator = 'Student' GROUP BY EnrollmentDate";
+
+            IEnumerable<EnrollmentDateGroup> data = _db.Database.SqlQuery<EnrollmentDateGroup>(query);
 
             return View(data.ToList());
         }
@@ -44,21 +44,15 @@ namespace ContosoUniversity.Controllers
         /// Displays the contact page.
         /// </summary>
         /// <returns>The contact page view.</returns>
-        public ActionResult Contact()
+        public IActionResult Contact() // Updated return type
         {
-            ViewBag.Message = "Your contact page.";
+            ViewData["Message"] = "Your contact page."; // Updated ViewBag to ViewData
 
             return View();
         }
 
-        /// <summary>
-        /// Disposes of the database context when the controller is disposed.
-        /// </summary>
-        /// <param name="disposing">True if disposing managed resources.</param>
-        protected override void Dispose(bool disposing)
-        {
-            db.Dispose();
-            base.Dispose(disposing);
-        }
+
+
+        // Dispose method is handled by dependency injection in ASP.NET Core
     }
 }
