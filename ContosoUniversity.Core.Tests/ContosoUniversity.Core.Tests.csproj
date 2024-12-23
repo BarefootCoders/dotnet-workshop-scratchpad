@@ -20,5 +20,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ContosoUniversity.Core.Mvc\ContosoUniversity.Core.Mvc.csproj" />
+  </ItemGroup>
 
 </Project>
