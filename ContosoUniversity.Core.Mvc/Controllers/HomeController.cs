@@ -1,31 +1,64 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using ContosoUniversity.Core.Mvc.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using ContosoUniversity.DAL;
+using ContosoUniversity.ViewModels;
 
-namespace ContosoUniversity.Core.Mvc.Controllers;
 
-public class HomeController : Controller
+namespace ContosoUniversity.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    /// <summary>
+    /// Controller for managing the home page, about page, and contact page.
+    /// </summary>
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        private SchoolContext db = new SchoolContext();
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+        /// <summary>
+        /// Displays the home page.
+        /// </summary>
+        /// <returns>The home page view.</returns>
+        public ActionResult Index()
+        {
+            return View();
+        }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        /// <summary>
+        /// Displays the about page with student enrollment statistics.
+        /// </summary>
+        /// <returns>The about page view with enrollment data.</returns>
+        public ActionResult About()
+        {
+            string query = "SELECT EnrollmentDate, COUNT(*) AS StudentCount "
+                + "FROM Person "
+                + "WHERE Discriminator = 'Student' "
+                + "GROUP BY EnrollmentDate";
+            IEnumerable<EnrollmentDateGroup> data = db.Database.SqlQuery<EnrollmentDateGroup>(query);
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(data.ToList());
+        }
+
+        /// <summary>
+        /// Displays the contact page.
+        /// </summary>
+        /// <returns>The contact page view.</returns>
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+
+        /// <summary>
+        /// Disposes of the database context when the controller is disposed.
+        /// </summary>
+        /// <param name="disposing">True if disposing managed resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            db.Dispose();
+            base.Dispose(disposing);
+        }
     }
 }
