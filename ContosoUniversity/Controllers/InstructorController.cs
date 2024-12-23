@@ -13,10 +13,19 @@ using System.Data.Entity.Infrastructure;
 
 namespace ContosoUniversity.Controllers
 {
+    /// <summary>
+    /// Controller for managing instructors.
+    /// </summary>
     public class InstructorController : Controller
     {
         private SchoolContext db = new SchoolContext();
 
+        /// <summary>
+        /// Displays a list of instructors.
+        /// </summary>
+        /// <param name="id">The ID of the selected instructor.</param>
+        /// <param name="courseID">The ID of the selected course.</param>
+        /// <returns>A view containing the list of instructors and their courses and enrollments.</returns>
         // GET: Instructor
         public ActionResult Index(int? id, int? courseID)
         {
@@ -54,7 +63,11 @@ namespace ContosoUniversity.Controllers
             return View(viewModel);
         }
 
-
+        /// <summary>
+        /// Displays details of a specific instructor.
+        /// </summary>
+        /// <param name="id">The ID of the instructor.</param>
+        /// <returns>A view containing the instructor details, or an HTTP 400 error if the ID is null, or an HTTP 404 error if the instructor is not found.</returns>
         // GET: Instructor/Details/5
         public ActionResult Details(int? id)
         {
@@ -70,6 +83,10 @@ namespace ContosoUniversity.Controllers
             return View(instructor);
         }
 
+        /// <summary>
+        /// Displays a form for creating a new instructor.
+        /// </summary>
+        /// <returns>A view containing the instructor creation form.</returns>
         public ActionResult Create()
         {
             var instructor = new Instructor();
@@ -78,6 +95,12 @@ namespace ContosoUniversity.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Creates a new instructor.
+        /// </summary>
+        /// <param name="instructor">The instructor data to create.</param>
+        /// <param name="selectedCourses">Array of course IDs that the instructor is assigned to.</param>
+        /// <returns>Redirects to the Index action if successful, or returns the create view with error messages if the model state is invalid.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "LastName,FirstMidName,HireDate,OfficeAssignment")]Instructor instructor, string[] selectedCourses)
@@ -101,7 +124,11 @@ namespace ContosoUniversity.Controllers
             return View(instructor);
         }
 
-
+        /// <summary>
+        /// Displays a form for editing an existing instructor.
+        /// </summary>
+        /// <param name="id">The ID of the instructor to edit.</param>
+        /// <returns>A view containing the instructor edit form, or an HTTP 400 error if the ID is null, or an HTTP 404 error if the instructor is not found.</returns>
         // GET: Instructor/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -122,6 +149,10 @@ namespace ContosoUniversity.Controllers
             return View(instructor);
         }
 
+        /// <summary>
+        /// Populates the assigned course data for the view model.
+        /// </summary>
+        /// <param name="instructor">The instructor for whom to populate course data.</param>
         private void PopulateAssignedCourseData(Instructor instructor)
         {
             var allCourses = db.Courses;
@@ -138,6 +169,13 @@ namespace ContosoUniversity.Controllers
             }
             ViewBag.Courses = viewModel;
         }
+
+        /// <summary>
+        /// Edits an existing instructor.
+        /// </summary>
+        /// <param name="id">The ID of the instructor to edit.</param>
+        /// <param name="selectedCourses">Array of course IDs that the instructor is assigned to.</param>
+        /// <returns>Redirects to the Index action if successful, or returns the edit view with error messages if an exception occurs or the model state is invalid.</returns>
         // POST: Instructor/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -180,6 +218,12 @@ namespace ContosoUniversity.Controllers
             PopulateAssignedCourseData(instructorToUpdate);
             return View(instructorToUpdate);
         }
+
+        /// <summary>
+        /// Updates the courses assigned to an instructor.
+        /// </summary>
+        /// <param name="selectedCourses">Array of course IDs that the instructor is assigned to.</param>
+        /// <param name="instructorToUpdate">The instructor to update.</param>
         private void UpdateInstructorCourses(string[] selectedCourses, Instructor instructorToUpdate)
         {
             if (selectedCourses == null)
@@ -212,6 +256,11 @@ namespace ContosoUniversity.Controllers
 
 
 
+        /// <summary>
+        /// Displays a confirmation page for deleting an instructor.
+        /// </summary>
+        /// <param name="id">The ID of the instructor to delete.</param>
+        /// <returns>A view containing the instructor deletion confirmation page, or an HTTP 400 error if the ID is null, or an HTTP 404 error if the instructor is not found.</returns>
         // GET: Instructor/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -227,6 +276,11 @@ namespace ContosoUniversity.Controllers
             return View(instructor);
         }
 
+        /// <summary>
+        /// Deletes an instructor.
+        /// </summary>
+        /// <param name="id">The ID of the instructor to delete.</param>
+        /// <returns>Redirects to the Index action.</returns>
         // POST: Instructor/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -251,6 +305,11 @@ namespace ContosoUniversity.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        /// <summary>
+        /// Releases unmanaged resources and optionally releases managed resources.
+        /// </summary>
+        /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
