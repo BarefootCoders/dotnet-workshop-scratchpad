@@ -1,6 +1,5 @@
 ﻿using ContosoUniversity.Models;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniversity.DAL
 {
@@ -14,17 +13,14 @@ namespace ContosoUniversity.DAL
         public DbSet<OfficeAssignment> OfficeAssignments { get; set; }
         public DbSet<Person> People { get; set; }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-
             modelBuilder.Entity<Course>()
                 .HasMany(c => c.Instructors).WithMany(i => i.Courses)
-                .Map(t => t.MapLeftKey("CourseID")
-                    .MapRightKey("InstructorID")
-                    .ToTable("CourseInstructor"));
+                .UsingEntity(j => j.ToTable("CourseInstructor"));
 
-            modelBuilder.Entity<Department>().MapToStoredProcedures();
+            // Stored Procedures are configured differently in EF Core.  This needs to be re-implemented
+            // modelBuilder.Entity<Department>().MapToStoredProcedures();
         }
     }
 }
