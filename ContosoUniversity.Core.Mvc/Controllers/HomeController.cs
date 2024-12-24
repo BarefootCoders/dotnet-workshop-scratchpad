@@ -33,11 +33,16 @@ namespace ContosoUniversity.Controllers
         /// <returns>The about page view with enrollment data.</returns>
         public IActionResult About() // Updated return type and async
         {
-            FormattableString query = $"SELECT EnrollmentDate, COUNT(*) AS StudentCount FROM Person WHERE Discriminator = 'Student' GROUP BY EnrollmentDate";
+            var data = _db.Students
+                .GroupBy(s => s.EnrollmentDate)
+                .Select(g => new EnrollmentDateGroup
+                {
+                    EnrollmentDate = g.Key,
+                    StudentCount = g.Count()
+                })
+                .ToList();
 
-            IEnumerable<EnrollmentDateGroup> data = _db.Database.SqlQuery<EnrollmentDateGroup>(query);
-
-            return View(data.ToList());
+            return View(data);
         }
 
         /// <summary>
