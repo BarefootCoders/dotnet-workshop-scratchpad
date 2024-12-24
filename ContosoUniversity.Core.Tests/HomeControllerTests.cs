@@ -30,7 +30,12 @@ namespace ContosoUniversity.Tests.Controllers
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
             var context = new SchoolContext(options);
-            context.Students.Add(new Student { EnrollmentDate = System.DateTime.Now });
+            context.Students.Add(new Student 
+            { 
+                EnrollmentDate = DateTime.Now,
+                FirstMidName = "John",
+                LastName = "Doe"
+            });
             context.SaveChanges();
 
             var controller = new HomeController(context);
